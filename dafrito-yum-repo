@@ -45,4 +45,4 @@ done
 echo "Signing packages"
 rpm --addsign $REPODIR/*.rpm || die "Failed to sign packages"
 createrepo $REPODIR
-rsync -nihavz $REPODIR/ /srv/dafrito/rpm/
+rsync -ihavz $REPODIR/ dafrito@linode:/srv/dafrito/rpm/
