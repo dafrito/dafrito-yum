@@ -42,6 +42,7 @@ for package in $(<packages); do
 	echo $package
 	sync_package $package
 done
+
 echo "Signing packages"
 rpm --addsign $REPODIR/*.rpm || die "Failed to sign packages"
 createrepo $REPODIR
