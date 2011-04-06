@@ -44,6 +44,13 @@ for package in $(<packages); do
 done
 
 echo "Signing packages"
-rpm --addsign $REPODIR/*.rpm || die "Failed to sign packages"
+failures=0
+while true; do
+	rpm --addsign $REPODIR/*.rpm && break
+	let failures++
+	if [ $failures -gt 3 ]; then
+		die "Failed to sign packages"
+	fi
+done
 createrepo $REPODIR
 rsync -ihavz $REPODIR/ dafrito@linode:/srv/dafrito/rpm/
