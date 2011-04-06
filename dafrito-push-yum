@@ -4,6 +4,7 @@ PATH=/bin:/usr/bin
 RPMDIR=$HOME/rpmbuild
 REPODIR=/tmp/dafrito/repo.$$
 CLEAN=clean
+PROJECTDIR=$HOME/projects
 
 die() {
 	echo $* 1>&2
@@ -29,8 +30,7 @@ sync_package() {
 	set - $*
 	unset IFS
 	local name=$1
-	shift
-	local path=`echo $1 | sed -e "s%^~%$HOME%"`
+	local path=$PROJECTDIR/$name
 	pushd $path || die "Failed to change directory to $path"
 	make $CLEAN rpm || die "Build failed for $name"
 	cp -p -v -t $REPODIR `rpm --specfile ./$name.spec -q | get_rpm_name` || die "Failed to copy packages"
