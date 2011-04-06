@@ -5,6 +5,8 @@ RPMDIR=$HOME/rpmbuild
 REPODIR=/tmp/dafrito/repo.$$
 PROJECTDIR=$HOME/projects
 
+#git diff --exit-code || die "Refusing to build from dirty repo"
+
 die() {
 	echo $* 1>&2
 	exit 1
@@ -39,7 +41,6 @@ sync_package() {
 	popd
 }
 
-#git diff --exit-code || die "Refusing to build from dirty repo"
 for package in $(<packages); do
 	echo $package
 	sync_package $package
