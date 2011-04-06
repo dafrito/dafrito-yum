@@ -12,6 +12,7 @@ die() {
 }
 
 mkdir -v $REPODIR || die "Could not create repo directory"
+rsync -ihavz dafrito@linode:/srv/dafrito/rpm/ $REPODIR/
 trap 'rm -rf $REPODIR' INT EXIT
 
 IFS='
@@ -33,7 +34,7 @@ sync_package() {
 	local path=$PROJECTDIR/$name
 	pushd $path || die "Failed to change directory to $path"
 	make $CLEAN rpm || die "Build failed for $name"
-	cp -p -v -t $REPODIR `rpm --specfile ./$name.spec -q | get_rpm_name` || die "Failed to copy packages"
+	cp -n -p -v -t $REPODIR `rpm --specfile ./$name.spec -q | get_rpm_name` || die "Failed to copy packages"
 	popd
 }
 
@@ -53,4 +54,4 @@ while true; do
 	fi
 done
 createrepo $REPODIR
-rsync -ihavz --delete $REPODIR/ dafrito@linode:/srv/dafrito/rpm/
+rsync -ihavz $REPODIR/ dafrito@linode:/srv/dafrito/rpm/
