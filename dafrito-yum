@@ -3,7 +3,6 @@ PATH=/bin:/usr/bin
 
 RPMDIR=$HOME/rpmbuild
 REPODIR=/tmp/dafrito/repo.$$
-CLEAN=clean
 PROJECTDIR=$HOME/projects
 
 die() {
@@ -29,7 +28,7 @@ sync_package() {
 	local name=$1
 	local path=$PROJECTDIR/$name
 	pushd $path || die "Failed to change directory to $path"
-	make $CLEAN rpm || die "Build failed for $name"
+	make rpm || die "Build failed for $name"
 	for rpm in `rpm --specfile $RPMDIR/SPECS/$name.spec -q`; do
 		rpmfile="$RPMDIR/RPMS/`echo $rpm | sed -nre 's%^.*\.([^.]+)$%\1%p'`/$rpm.rpm"
 		if [ ! -f $REPODIR/`basename $rpmfile` ]; then
