@@ -34,7 +34,7 @@ sync_package() {
 	local path=$PROJECTDIR/$name
 	pushd $path || die "Failed to change directory to $path"
 	make $CLEAN rpm || die "Build failed for $name"
-	cp -n -p -v -t $REPODIR `rpm --specfile ./$name.spec -q | get_rpm_name` || die "Failed to copy packages"
+	cp -n -p -v -t $REPODIR `rpm --specfile $RPMDIR/SPECS/$name.spec -q | get_rpm_name` || die "Failed to copy packages"
 	popd
 }
 
