@@ -13,17 +13,13 @@ die() {
 
 mkdir -v $REPODIR || die "Could not create repo directory"
 rsync -ihavz dafrito@linode:/srv/dafrito/rpm/ $REPODIR/
+exit
 trap 'rm -rf $REPODIR' INT EXIT
 
 IFS='
 '
 
-get_rpm_name() {
-	while read rpm; do
-		arch=`echo $rpm | sed -nre 's%^.*\.([^.]+)$%\1%p'`
-		echo $RPMDIR/RPMS/$arch/$rpm.rpm
-	done
-}
+unsigned=
 
 sync_package() {
 	IFS='	
@@ -34,7 +30,13 @@ sync_package() {
 	local path=$PROJECTDIR/$name
 	pushd $path || die "Failed to change directory to $path"
 	make $CLEAN rpm || die "Build failed for $name"
-	cp -n -p -v -t $REPODIR `rpm --specfile $RPMDIR/SPECS/$name.spec -q | get_rpm_name` || die "Failed to copy packages"
+	for rpm in `rpm --specfile $RPMDIR/SPECS/$name.spec -q`; do
+		rpmfile="$RPMDIR/RPMS/`echo $rpm | sed -nre 's%^.*\.([^.]+)$%\1%p'`/$rpm.rpm"
+		if [ ! -f $REPODIR/`basename $rpmfile` ]; then
+			cp -v -p $rpmfile $REPODIR || die "Failed to copy package: $rpmfile"
+			unsigned="$unsigned $rpm.rpm"
+		fi
+	done
 	popd
 }
 
@@ -44,14 +46,23 @@ for package in $(<packages); do
 	sync_package $package
 done
 
-echo "Signing packages"
-failures=0
-while true; do
-	rpm --addsign $REPODIR/*.rpm && break
-	let failures++
-	if [ $failures -gt 3 ]; then
-		die "Failed to sign packages"
-	fi
-done
-createrepo $REPODIR
-rsync -ihavz $REPODIR/ dafrito@linode:/srv/dafrito/rpm/
+echo
+if [ -n "$unsigned" ]; then
+	cd $REPODIR
+	echo "The following packages will be updated and require a signature:"
+	for rpm in $unsigned; do
+		basename $rpm .rpm
+	done
+	failures=0
+	while true; do
+		rpm --addsign $unsigned && break
+		let failures++
+		if [ $failures -gt 3 ]; then
+			die "Failed to sign packages"
+		fi
+	done
+	createrepo $REPODIR
+	rsync -ihavz $REPODIR/ dafrito@linode:/srv/dafrito/rpm/
+else
+	echo "No packages need to be updated"
+fi
