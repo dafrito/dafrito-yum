@@ -1,0 +1,47 @@
+#!/bin/bash
+PATH=/bin:/usr/bin
+
+RPMDIR=$HOME/rpmbuild
+REPODIR=/tmp/dafrito/repo.$$
+
+die() {
+	echo $* 1>&2
+	exit 1
+}
+
+mkdir -v $REPODIR || die "Could not create repo directory"
+trap 'rm -rf $REPODIR' INT EXIT
+
+IFS='
+'
+
+get_rpm_name() {
+	while read rpm; do
+		arch=`echo $rpm | sed -nre 's%^.*\.([^.]+)$%\1%p'`
+		echo $RPMDIR/RPMS/$arch/$rpm.rpm
+	done
+}
+
+sync_package() {
+	IFS='	
+'
+	set - $*
+	unset IFS
+	local name=$1
+	shift
+	local path=`echo $1 | sed -e "s%^~%$HOME%"`
+	pushd $path || die "Failed to change directory to $path"
+	make rpm || die "Build failed for $name"
+	cp -p -v -t $REPODIR `rpm --specfile ./$name.spec -q | get_rpm_name` || die "Failed to copy packages"
+	popd
+}
+
+#git diff --exit-code || die "Refusing to build from dirty repo"
+for package in $(<packages); do
+	echo $package
+	sync_package $package
+done
+echo "Signing packages"
+rpm --addsign $REPODIR/*.rpm || die "Failed to sign packages"
+createrepo $REPODIR
+rsync -nihavz $REPODIR/ /srv/dafrito/rpm/
