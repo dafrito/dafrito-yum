@@ -50,7 +50,7 @@ if [ -n "$unsigned" ]; then
 			die "Failed to sign packages"
 		fi
 	done
-	createrepo --update .
+	createrepo -C -v .
 else
 	echo "No packages need to be updated"
 fi
