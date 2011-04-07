@@ -4,7 +4,7 @@ PATH=/bin:/usr/bin
 
 REPODIR=$*
 REPODIR=${REPODIR:-.}
-[ -d $REPODIR/repodata ] || die "$REPODIR does not look like a yum repository"
+[ -d "$REPODIR/repodata" ] || die "$REPODIR does not look like a yum repository"
 
 unsigned=
 

@@ -8,8 +8,8 @@ rsync -ihavz --delete $* $REPODIR/ $REMOTE/
 
 REPODIR=$*
 REPODIR=${REPODIR:-.}
-[ -d $REPODIR/repodata ] || die "$REPODIR does not look like a yum repository"
-createrepo --update -v $REPODIR/ # update the repository's metadata first
+[ -d "$REPODIR/repodata" ] || die "$REPODIR does not look like a yum repository"
+createrepo --update -C -v $REPODIR/ # update the repository's metadata first
 sync -n 
 read -p "Is this acceptable? [y/n]: "
 case $REPLY in

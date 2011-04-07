@@ -8,8 +8,8 @@ sync() {
 
 REPODIR=$*
 REPODIR=${REPODIR:-.}
-if [ -d $REPODIR ]; then
-	[ -d $REPODIR/repodata ] || die "$REPODIR does not look like a yum repository"
+if [ -d "$REPODIR" ]; then
+	[ -d "$REPODIR/repodata" ] || die "$REPODIR does not look like a yum repository"
 	sync -n
 	read -p "Is this acceptable? [y/n]: "
 	case $REPLY in
