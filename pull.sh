@@ -1,6 +1,6 @@
 #!/bin/bash
 PATH=/bin:/usr/bin
-. $LIBDIR/functions.sh
+. $LIBDIR/functions.sh || exit 1
 
 sync() {
 	rsync -ihavz $* $REMOTE/* $REPODIR/

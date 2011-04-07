@@ -1,6 +1,6 @@
 #!/bin/bash
 PATH=/bin:/usr/bin
-. functions.sh
+. $LIBDIR/functions.sh || exit 1
 
 REPODIR=$*
 REPODIR=${REPODIR:-.}
