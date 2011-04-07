@@ -3,7 +3,7 @@ PATH=/bin:/usr/bin
 . $LIBDIR/functions.sh
 
 sync() {
-	rsync -ihavz $* $REMOTE/ $REPODIR/
+	rsync -ihavz $* $REMOTE/* $REPODIR/
 }
 
 REPODIR=$*
