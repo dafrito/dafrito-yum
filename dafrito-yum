@@ -1,68 +1,47 @@
 #!/bin/bash
 PATH=/bin:/usr/bin
 
-RPMDIR=$HOME/rpmbuild
-REPODIR=/tmp/dafrito/repo.$$
-PROJECTDIR=$HOME/projects
+# Path to the dafrito-yum executable
+export FRITOBIN=$0
+
+# Path to the directory containing RPM-making projects
+export PROJECTDIR=$HOME/projects
+
+# Path to the RPM building root (SOURCES, SPECS, etc.)
+export RPMDIR=$HOME/rpmbuild
+
+# Temporary directory path, will be destroyed on exit.
+export TMPDIR=/tmp/dafrito/dafrito-yum.$$
+
+# Location of the remote repository, as accessed by SSH
+export REMOTE="dafrito@linode:/srv/dafrito/rpm"
+
+# Path to individual command scripts
+export LIBDIR=`dirname $FRITOBIN`
+
+# Path to configuration files
+export CONFIGDIR=`dirname $FRITOBIN`
+
+. $LIBDIR/functions.sh
 
 #git diff --exit-code || die "Refusing to build from dirty repo"
 
-die() {
-	echo $* 1>&2
-	exit 1
+
+mkdir $TMPDIR || die "Could not create temporary directory"
+trap 'rm -rf $TMPDIR' INT EXIT
+
+export CMD=$1
+shift
+
+command() {
+	local cmd=$1
+	shift
+	bash $LIBDIR/$cmd.sh $*
 }
 
-mkdir -v $REPODIR || die "Could not create repo directory"
-rsync -ihavz dafrito@linode:/srv/dafrito/rpm/ $REPODIR/
-exit
-trap 'rm -rf $REPODIR' INT EXIT
-
-IFS='
-'
-
-unsigned=
-
-sync_package() {
-	IFS='	
-'
-	set - $*
-	unset IFS
-	local name=$1
-	local path=$PROJECTDIR/$name
-	pushd $path || die "Failed to change directory to $path"
-	make rpm || die "Build failed for $name"
-	for rpm in `rpm --specfile $RPMDIR/SPECS/$name.spec -q`; do
-		rpmfile="$RPMDIR/RPMS/`echo $rpm | sed -nre 's%^.*\.([^.]+)$%\1%p'`/$rpm.rpm"
-		if [ ! -f $REPODIR/`basename $rpmfile` ]; then
-			cp -v -p $rpmfile $REPODIR || die "Failed to copy package: $rpmfile"
-			unsigned="$unsigned $rpm.rpm"
-		fi
-	done
-	popd
-}
-
-for package in $(<packages); do
-	echo $package
-	sync_package $package
-done
-
-echo
-if [ -n "$unsigned" ]; then
-	cd $REPODIR
-	echo "The following packages will be updated and require a signature:"
-	for rpm in $unsigned; do
-		basename $rpm .rpm
-	done
-	failures=0
-	while true; do
-		rpm --addsign $unsigned && break
-		let failures++
-		if [ $failures -gt 3 ]; then
-			die "Failed to sign packages"
-		fi
-	done
-	createrepo $REPODIR
-	rsync -ihavz $REPODIR/ dafrito@linode:/srv/dafrito/rpm/
-else
-	echo "No packages need to be updated"
-fi
+case "$CMD" in 
+	pull|clone|get) command pull $* ;;
+	push|sync) command push $* ;;
+	up*|build|make) command update $* ;;
+	*) die "Usage: `basename $FRITOBIN` {push|pull|build}"
+esac
