@@ -52,5 +52,5 @@ if [ -n "$unsigned" ]; then
 	done
 	createrepo -C -v .
 else
-	echo "No packages need to be updated"
+	echo "No packages were added"
 fi
