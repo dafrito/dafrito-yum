@@ -2,6 +2,8 @@
 PATH=/bin:/usr/bin
 . $LIBDIR/functions.sh || exit 1
 
+CLEAN=clean
+
 REPODIR=$*
 REPODIR=${REPODIR:-.}
 [ -d "$REPODIR/repodata" ] || die "$REPODIR does not look like a yum repository"
@@ -16,7 +18,7 @@ sync_package() {
 	local name=$1
 	local path=$PROJECTDIR/$name
 	pushd $path || die "Failed to change directory to $path"
-	make rpm || die "Build failed for $name"
+	make $CLEAN rpm || die "Build failed for $name"
 	popd
 	for rpm in `rpm --specfile $RPMDIR/SPECS/$name.spec -q`; do
 		rpmfile="$RPMDIR/RPMS/`echo $rpm | sed -nre 's%^.*\.([^.]+)$%\1%p'`/$rpm.rpm"
