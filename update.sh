@@ -4,7 +4,14 @@ PATH=/bin:/usr/bin
 
 REPODIR=$*
 REPODIR=${REPODIR:-.}
-[ -d "$REPODIR/repodata" ] || die "$REPODIR does not look like a yum repository"
+if [ ! -d "$REPODIR/repodata" ]; then
+	echo "$REPODIR does not look like a yum repository" 1>&2
+	read -p "Create anyway? [y/n]"
+	case $REPLY in
+		[yY]*) true ;;
+		*) die ;;
+	esac
+fi
 
 unsigned=
 
