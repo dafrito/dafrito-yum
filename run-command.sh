@@ -40,8 +40,9 @@ command() {
 }
 
 case "$CMD" in 
+	add) command add $* ;;
 	pull|clone|get) command pull $* ;;
 	push|sync) command push $* ;;
 	up*|build|make) command update $* ;;
-	*) die "Usage: $NAME {push|pull|build}"
+	*) die "Usage: $NAME {add|push|pull|build}"
 esac
