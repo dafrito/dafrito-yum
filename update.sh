@@ -18,6 +18,7 @@ sync_package() {
 		local arch=`echo $rpm | grep -E -o '[^.]+$'`
 		local rpmfile="$RPMDIR/RPMS/$arch/$rpm.rpm"
 		if [ ! -f $REPODIR/`basename $rpmfile` ]; then
+			trap 'cd $REPODIR && rm -v $unsigned' EXIT
 			cp -v -p $rpmfile $REPODIR || die "Failed to copy package: $rpmfile"
 			unsigned="$unsigned $rpm.rpm"
 		fi
@@ -40,13 +41,9 @@ if [ -n "$unsigned" ]; then
 	for rpm in $unsigned; do
 		basename $rpm .rpm
 	done
-	if ! attempt 3 rpm --addsign $unsigned; then
-		for rpm in $unsigned; do
-			rm -v $rpm
-		done
-		die "Failed after 3 tries"	
-	fi
+	attempt 3 rpm --addsign $unsigned || die "Failed after 3 tries"
 	createrepo -C -v .
+	trap - EXIT
 else
 	echo "No packages were added"
 fi
