@@ -1,0 +1,64 @@
+# Name: and %{fullname} are provided during the build process
+
+# Change all release values back to 1 when bumping to a new version
+Version:	1.0
+Release:	1%{?dist}
+Summary:	Yum repository manager
+
+Group:		Applications/System
+License:	MIT
+URL:		http://www.dafrito.com
+Source0:	http://files.dafrito.com/builds/%{fullname}.tar.gz
+BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildArch:	noarch
+
+Requires:	rpm-build rsync createrepo
+
+%description
+%{name} uses rsync and yum to manage a Yum repository. It's useful for
+small, privately managed repositories that all create their own packages.
+
+%prep
+%setup -q -n %{fullname}
+
+%build
+cat >>%{name} <<EOF
+#!/bin/bash
+PATH=/bin:/usr/bin
+
+INSTALLED=true
+NAME=%{name}
+LIBDIR=%{_libdir}/%{name}
+DATADIR=%{_datadir}/%{name}
+
+CONFIGDIR=$HOME/.%{name}
+
+source %{configdir}/run-command.sh $*
+EOF
+chmod ugo+x %{name}
+
+%install
+[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+
+# Install our bootstrapper
+mkdir -p			$RPM_BUILD_ROOT%{_bindir}
+install -p -m 755 %{name}	$RPM_BUILD_ROOT%{_bindir}
+
+mkdir -p 		$RPM_BUILD_ROOT%{_libdir}/%{name}
+install -p -m 755 *.sh	$RPM_BUILD_ROOT%{_libdir}/%{name}
+
+mkdir -p 		$RPM_BUILD_ROOT%{_datadir}/%{name}
+cp -p config		$RPM_BUILD_ROOT%{_datadir}/%{name}
+cp -p config.default	$RPM_BUILD_ROOT%{_datadir}/%{name}
+
+%clean
+[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+
+%files
+%{_bindir}/*
+%{_libdir}/%{name}/*
+%{_datadir}/%{name}/*
+
+%changelog
+* Sat Apr 08 2011 Aaron Faanes <dafrito@gmail.com> - 1.0-1
+- Initial package
