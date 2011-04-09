@@ -50,3 +50,8 @@ attempt() {
 		fi
 	done
 }
+
+abs_path() {
+	cd $1
+	pwd
+}
