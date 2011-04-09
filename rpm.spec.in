@@ -48,7 +48,6 @@ mkdir -p 		$RPM_BUILD_ROOT%{_libdir}/%{name}
 install -p -m 755 *.sh	$RPM_BUILD_ROOT%{_libdir}/%{name}
 
 mkdir -p 		$RPM_BUILD_ROOT%{_datadir}/%{name}
-cp -p config		$RPM_BUILD_ROOT%{_datadir}/%{name}
 cp -p config.default	$RPM_BUILD_ROOT%{_datadir}/%{name}
 
 %clean
