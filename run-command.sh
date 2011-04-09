@@ -41,6 +41,7 @@ mkdir -p $PACKAGEDIR || die "Failed to create package directory: $PACKAGEDIR"
 CMD=$1
 shift
 
+check_remote || die
 export NAME CONFIGDIR LIBDIR DATADIR SRCDIR RPMDIR CMD REMOTE PACKAGEDIR
 
 command() {

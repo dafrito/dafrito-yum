@@ -38,6 +38,36 @@ is_package_repo() {
 	popd >/dev/null
 }
 
+get_remote_host() {
+	echo $REMOTE | grep -o -E '^[^:]+'
+}
+
+get_remote_path() {
+	echo $REMOTE | grep -o -E '[^:]+$'
+}
+
+test_remote() {
+	ssh `get_remote_host` "ls -ld `get_remote_path` >/dev/null"
+}
+
+check_remote() {
+	if [ -z "$REMOTE" ] || (echo $REMOTE | grep -q example); then
+		echo "REMOTE is not valid (currently $REMOTE)"
+		read -p "Press any key to edit $CONFIGDIR/config"
+		$EDITOR $CONFIGDIR/config
+		source $CONFIGDIR/config || die "Failed to read configuration"
+		if test_remote; then
+			echo "REMOTE is now $REMOTE"
+			return
+		fi;
+		die "Failed to set REMOTE"
+	else
+		if ! test_remote; then
+			die "Failed to acess $REMOTE"
+		fi
+	fi
+}
+
 attempt() {
 	local times=$1
 	shift
