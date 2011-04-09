@@ -40,7 +40,12 @@ if [ -n "$unsigned" ]; then
 	for rpm in $unsigned; do
 		basename $rpm .rpm
 	done
-	attempt 3 rpm --addsign $unsigned || die "Failed after 3 tries"
+	if ! attempt 3 rpm --addsign $unsigned; then
+		for rpm in $unsigned; do
+			rm -v $rpm
+		done
+		die "Failed after 3 tries"	
+	fi
 	createrepo -C -v .
 else
 	echo "No packages were added"
