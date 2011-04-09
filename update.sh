@@ -25,14 +25,12 @@ sync_package() {
 	done
 }
 
-if [ -d "$CONFIGDIR/packages" ]; then
-	pushd $CONFIGDIR/packages
-	for package in *; do
-		echo $package
-		sync_package $package
-	done
-	popd
-fi
+pushd $PACKAGEDIR
+for package in *; do
+	echo $package
+	sync_package $package
+done
+popd
 
 echo
 if [ -n "$unsigned" ]; then

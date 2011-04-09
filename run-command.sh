@@ -14,12 +14,14 @@ if [ ! "$INSTALLED" ]; then
 
 	# User-specific configuration, typically ~/.$NAME
 	CONFIGDIR=$LIBDIR/config
+	CONFIGDIR=$LIBDIR/config
 fi
 
 if ! source $LIBDIR/functions.sh; then
 	echo "$NAME: Failed to load functions.sh" 1>&2
 	exit 1
 fi
+
 
 mkdir -p $CONFIGDIR || die "Failed to create configuration directory: $CONFIGDIR"
 configfile=$CONFIGDIR/config
@@ -28,10 +30,13 @@ if [ ! -f "$configfile" ]; then
 fi
 source $configfile || die "Failed to read configuration: $configfile"
 
+PACKAGEDIR=$CONFIGDIR/packages
+mkdir -p $PACKAGEDIR || die "Failed to create package directory: $PACKAGEDIR"
+
 CMD=$1
 shift
 
-export NAME CONFIGDIR LIBDIR DATADIR SRCDIR RPMDIR CMD REMOTE
+export NAME CONFIGDIR LIBDIR DATADIR SRCDIR RPMDIR CMD REMOTE PACKAGEDIR
 
 command() {
 	local cmd=$1
