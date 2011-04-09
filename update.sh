@@ -3,7 +3,7 @@ PATH=/bin:/usr/bin
 
 REPODIR=$*
 REPODIR=${REPODIR:-.}
-if is_yum_repo $REPODIR; then
+if ! is_yum_repo $REPODIR; then
 	echo "$REPODIR does not look like a yum repository" 1>&2
 	confirm "Create anyway?" || die
 fi
