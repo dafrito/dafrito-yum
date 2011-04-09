@@ -12,8 +12,7 @@ unsigned=
 
 sync_package() {
 	local name=$1
-	local path=$SRCDIR/$name
-	pushd $path || die "Failed to change directory to $path"
+	pushd $name || die "Failed to change directory to $name"
 	make rpm || die "Build failed for $name"
 	popd
 	for rpm in `rpm --specfile $RPMDIR/SPECS/$name.spec -q`; do
@@ -26,10 +25,14 @@ sync_package() {
 	done
 }
 
-for package in $(<$CONFIGDIR/packages); do
-	echo $package
-	sync_package $package
-done
+if [ -d "$CONFIGDIR/packages" ]; then
+	pushd $CONFIGDIR/packages
+	for package in *; do
+		echo $package
+		sync_package $package
+	done
+	popd
+fi
 
 echo
 if [ -n "$unsigned" ]; then
