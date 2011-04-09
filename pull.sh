@@ -11,7 +11,7 @@ if [ -d "$REPODIR" ]; then
 	is_yum_repo $REPODIR || die "$REPODIR does not look like a yum repository"
 	do_pull -n && confirm && do_pull || die "Failed to pull"
 else
-	mkdir -v $REPODIR || die
+	confirm "$REPODIR does not exist. Create?" && mkdir -v -p $REPODIR || die
 	REPODIR=`abs_path "$REPODIR"`
 	do_pull || die "Failed to pull"
 fi
