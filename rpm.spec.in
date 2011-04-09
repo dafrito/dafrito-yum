@@ -31,9 +31,9 @@ NAME=%{name}
 LIBDIR=%{_libdir}/%{name}
 DATADIR=%{_datadir}/%{name}
 
-CONFIGDIR=$HOME/.%{name}
+CONFIGDIR=\$HOME/.%{name}
 
-source $LIBDIR/run-command.sh $*
+source \$LIBDIR/run-command.sh $*
 EOF
 chmod ugo+x %{name}
 
