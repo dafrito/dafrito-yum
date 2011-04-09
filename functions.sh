@@ -5,6 +5,14 @@ die() {
 	exit 1
 }
 
+warn() {
+	echo $* 1>&2
+}
+
+noop() {
+	true # do nothing
+}
+
 confirm() {
 	local query="$*"
 	[ -n "$query" ] || query="Is this acceptable?"
