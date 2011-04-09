@@ -2,7 +2,7 @@
 PATH=/bin:/usr/bin
 
 do_push() {
-	rsync -ihavz --delete $* "$REPODIR/*" $REMOTE/
+	rsync -ihavz --delete $* $REPODIR/* $REMOTE/
 }
 
 REPODIR=`abs_path "${1:-.}"`
