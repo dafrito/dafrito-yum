@@ -63,7 +63,7 @@ check_remote() {
 		die "Failed to set REMOTE"
 	else
 		if ! test_remote; then
-			die "Failed to acess $REMOTE"
+			die "Failed to access $REMOTE"
 		fi
 	fi
 }
