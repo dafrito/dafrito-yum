@@ -16,7 +16,11 @@ tar: $(OUTDIR)/$(tarfile)
 .PHONY: tar
 
 clean-repo:
+ifndef DIRTY_REPO
 	git diff --exit-code || (echo "Error: Repository must not be dirty"; exit 1) # fail if changes exist
+else
+	true
+endif
 .PHONY: clean-repo
 
 $(OUTDIR)/$(tarfile): clean-repo .git/refs/heads/master | $(OUTDIR)
@@ -34,10 +38,11 @@ $(OUTDIR)/$(NAME).spec: $(SPECFILE) | $(OUTDIR)
 	echo "%define fullname $(FULLNAME)" >>$@
 	cat $^ >>$@
 
+RPMFLAGS ?= --ba
 rpm: clean-repo $(OUTDIR)/$(tarfile) $(OUTDIR)/$(NAME).spec | $(RPMDIR)
 	cp -u $(OUTDIR)/$(tarfile)	$(RPMDIR)/SOURCES
 	cp -u $(OUTDIR)/$(NAME).spec	$(RPMDIR)/SPECS
-	rpmbuild --ba $(RPMDIR)/SPECS/$(NAME).spec
+	rpmbuild $(RPMFLAGS) $(RPMDIR)/SPECS/$(NAME).spec
 	cd $(OUTDIR); \
 	for package in `rpm -q --specfile ./$(NAME).spec`; do \
 		arch=`echo $$package | grep -E -o '[^.]+$$'`; \
