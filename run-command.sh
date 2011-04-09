@@ -51,6 +51,7 @@ command() {
 
 case "$CMD" in 
 	add) command add $* ;;
+	ls|list) ls -l $PACKAGEDIR ;;
 	pull|clone|get) command pull $* ;;
 	push|sync) command push $* ;;
 	up*|build|make) command update $* ;;
