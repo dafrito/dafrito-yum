@@ -1,13 +1,14 @@
-include config
+include build.config
 
 # Default rule
 all: tar rpm
 .PHONY: all
 
-FULLNAME=$(shell git describe)
+FULLNAME=$(NAME)-$(shell git describe --always)
 
 OUTDIR ?= build
-RPMDIR ?= ~/rpmbuild
+RPMDIR ?= $$HOME/rpmbuild
+SPECFILE ?= rpm.spec.in
 
 tarfile=$(FULLNAME).tar.gz
 
@@ -27,7 +28,7 @@ $(OUTDIR):
 spec: $(OUTDIR)/$(NAME).spec
 .PHONY: spec
 
-$(OUTDIR)/$(NAME).spec: rpm.spec.in | $(OUTDIR)
+$(OUTDIR)/$(NAME).spec: $(SPECFILE) | $(OUTDIR)
 	echo -n >$@
 	echo "Name:	$(NAME)" >>$@
 	echo "%define fullname $(FULLNAME)" >>$@
@@ -37,6 +38,12 @@ rpm: clean-repo $(OUTDIR)/$(tarfile) $(OUTDIR)/$(NAME).spec | $(RPMDIR)
 	cp -u $(OUTDIR)/$(tarfile)	$(RPMDIR)/SOURCES
 	cp -u $(OUTDIR)/$(NAME).spec	$(RPMDIR)/SPECS
 	rpmbuild --ba $(RPMDIR)/SPECS/$(NAME).spec
+	cd $(OUTDIR); \
+	for package in `rpm -q --specfile ./$(NAME).spec`; do \
+		arch=`echo $$package | grep -E -o '[^.]+$$'`; \
+		filename="$(RPMDIR)/RPMS/$$arch/$$package.rpm"; \
+		[ -e `basename $$filename` ] || ln -s $$filename; \
+	done
 .PHONY: rpm
 
 $(RPMDIR):
