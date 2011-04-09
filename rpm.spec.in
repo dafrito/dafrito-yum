@@ -2,7 +2,7 @@
 
 # Change all release values back to 1 when bumping to a new version
 Version:	1.1
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Yum repository manager
 
 Group:		Applications/System
