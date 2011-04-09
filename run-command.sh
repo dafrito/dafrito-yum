@@ -9,7 +9,7 @@ if [ ! "$INSTALLED" ]; then
 	bindir=`dirname $0`
 	cd $bindir
 	bindir=`pwd`
-	cd -
+	cd - >/dev/null
 
 	# Internally-used commands, typically /usr/lib/$NAME
 	LIBDIR=$bindir
