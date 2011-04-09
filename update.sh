@@ -11,10 +11,6 @@ fi
 unsigned=
 
 sync_package() {
-	IFS='	
-'
-	set - $*
-	unset IFS
 	local name=$1
 	local path=$SRCDIR/$name
 	pushd $path || die "Failed to change directory to $path"
@@ -28,9 +24,6 @@ sync_package() {
 		fi
 	done
 }
-
-IFS='
-'
 
 for package in $(<$CONFIGDIR/packages); do
 	echo $package
