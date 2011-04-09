@@ -4,7 +4,7 @@ PATH=/bin:/usr/bin
 if [ ! "$INSTALLED" ]; then
 	NAME=`basename $0 .sh`
 	LIBDIR=`dirname $0`
-	CONFIGDIR=$LIBDIR
+	CONFIGDIR=$LIBDIR/config
 fi
 
 if ! source $LIBDIR/functions.sh; then
