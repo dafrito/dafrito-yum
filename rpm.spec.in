@@ -2,7 +2,7 @@
 
 # Change all release values back to 1 when bumping to a new version
 Version:	1.0
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	Yum repository manager
 
 Group:		Applications/System
@@ -59,5 +59,8 @@ cp -p config.default	$RPM_BUILD_ROOT%{_datadir}/%{name}
 %{_datadir}/%{name}/*
 
 %changelog
-* Sat Apr 08 2011 Aaron Faanes <dafrito@gmail.com> - 1.0-1
+* Sat Apr 09 2011 Aaron Faanes <dafrito@gmail.com> - 1.0-3
+- Unsigned packages are deleted if signing fails
+
+* Fri Apr 08 2011 Aaron Faanes <dafrito@gmail.com> - 1.0-1
 - Initial package
