@@ -21,7 +21,7 @@ sync_package() {
 	set - $*
 	unset IFS
 	local name=$1
-	local path=$PROJECTDIR/$name
+	local path=$SRCDIR/$name
 	pushd $path || die "Failed to change directory to $path"
 	make rpm || die "Build failed for $name"
 	popd

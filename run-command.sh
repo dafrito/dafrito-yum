@@ -1,47 +1,38 @@
 #!/bin/bash
 PATH=/bin:/usr/bin
 
-# Path to the dafrito-yum executable
-export FRITOBIN=$0
+if [ ! "$INSTALLED" ]; then
+	NAME=`basename $0 .sh`
+	LIBDIR=`dirname $0`
+	CONFIGDIR=$LIBDIR
+fi
 
-# Path to the directory containing RPM-making projects
-export PROJECTDIR=$HOME/projects
+if ! source $LIBDIR/functions.sh; then
+	echo "$NAME: Failed to load functions.sh" 1>&2
+	exit 1
+fi
 
-# Path to the RPM building root (SOURCES, SPECS, etc.)
-export RPMDIR=$HOME/rpmbuild
+mkdir -p $CONFIGDIR || die "Failed to create configuration directory: $CONFIGDIR"
+configfile=$CONFIGDIR/config
+if [ ! -f "$configfile" ]; then
+	cp $LIBDIR/config.default $configfile || die "Failed to create configuration: $configfile"
+fi
+source $configfile || die "Failed to read configuration: $configfile"
 
-# Temporary directory path, will be destroyed on exit.
-export TMPDIR=/tmp/dafrito/dafrito-yum.$$
-
-# Location of the remote repository, as accessed by SSH
-export REMOTE="dafrito@linode:/srv/dafrito/rpm"
-
-# Path to individual command scripts
-export LIBDIR=`dirname $FRITOBIN`
-
-# Path to configuration files
-export CONFIGDIR=`dirname $FRITOBIN`
-
-. $LIBDIR/functions.sh
-
-#git diff --exit-code || die "Refusing to build from dirty repo"
-
-
-mkdir $TMPDIR || die "Could not create temporary directory"
-trap 'rm -rf $TMPDIR' INT EXIT
-
-export CMD=$1
+CMD=$1
 shift
+
+export NAME CONFIGDIR LIBDIR SRCDIR RPMDIR REMOTE
 
 command() {
 	local cmd=$1
 	shift
-	bash $LIBDIR/$cmd.sh $*
+	bash -c "source $LIBDIR/functions.sh; source $configfile; source $LIBDIR/$cmd.sh $*"
 }
 
 case "$CMD" in 
 	pull|clone|get) command pull $* ;;
 	push|sync) command push $* ;;
 	up*|build|make) command update $* ;;
-	*) die "Usage: `basename $FRITOBIN` {push|pull|build}"
+	*) die "Usage: $NAME {push|pull|build}"
 esac

@@ -1,0 +1,8 @@
+# Path to the directory containing RPM-making repositories
+SRCDIR=$HOME/src
+
+# Path to the RPM building root (SOURCES, SPECS, etc.)
+RPMDIR=$HOME/rpmbuild
+
+# Location of the remote repository, as accessed by SSH
+REMOTE="johndoe@hostname:/path/to/repo"
