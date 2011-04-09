@@ -54,6 +54,7 @@ attempt() {
 }
 
 abs_path() {
-	cd $1
+	[ -d $1 ] || die "$1 is not a directory"
+	cd $1 || die "Failed to chdir into $1"
 	pwd
 }
