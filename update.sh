@@ -26,9 +26,11 @@ sync_package() {
 }
 
 pushd $PACKAGEDIR
-for package in *; do
-	echo $package
-	sync_package $package
+for package in `ls`; do
+	if [ -d $package ]; then
+		echo $package
+		sync_package $package
+	fi
 done
 popd
 
