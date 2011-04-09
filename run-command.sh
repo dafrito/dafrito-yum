@@ -6,13 +6,13 @@ if [ ! "$INSTALLED" ]; then
 	# Name of this tool
 	NAME=`basename $0 .sh`
 
-	# Internally-used commands
+	# Internally-used commands, typically /usr/lib/$NAME
 	LIBDIR=`dirname $0`
 
-	# Arch-independent data for this tool
+	# Arch-independent data for this tool, typically /usr/share/$NAME
 	DATADIR=`dirname $0`
 
-	# User-specific configuration
+	# User-specific configuration, typically ~/.$NAME
 	CONFIGDIR=$LIBDIR/config
 fi
 
