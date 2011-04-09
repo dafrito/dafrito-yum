@@ -33,7 +33,7 @@ DATADIR=%{_datadir}/%{name}
 
 CONFIGDIR=$HOME/.%{name}
 
-source %{configdir}/run-command.sh $*
+source $LIBDIR/run-command.sh $*
 EOF
 chmod ugo+x %{name}
 
