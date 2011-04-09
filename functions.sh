@@ -47,9 +47,10 @@ attempt() {
 		$cmd && break
 		let failures++
 		if [ $failures -gt $times ]; then
-			die "Failed after $times tries"
+			return 1
 		fi
 	done
+	return 0
 }
 
 abs_path() {
