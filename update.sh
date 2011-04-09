@@ -1,10 +1,15 @@
 #!/bin/bash
 PATH=/bin:/usr/bin
 
-REPODIR=`abs_path "${1:-.}"`
-if ! is_yum_repo $REPODIR; then
-	echo "$REPODIR does not look like a yum repository" 1>&2
-	confirm "Create anyway?" || die
+if [ -d "$REPODIR" ]; then
+	REPODIR=`abs_path "${1:-.}"`
+	if ! is_yum_repo $REPODIR; then
+		echo "$REPODIR does not look like a yum repository" 1>&2
+		confirm "Create anyway?" || die
+	fi
+else
+	confirm "$REPODIR does not exist. Create?" && mkdir -p $REPODIR || die
+	REPODIR=`abs_path "${1:-.}"`
 fi
 
 unsigned=
