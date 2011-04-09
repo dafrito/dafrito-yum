@@ -24,7 +24,7 @@ confirm() {
 }
 
 is_yum_repo() {
-	[ -d "$*"/repodata ]
+	[ -d "$1"/repodata ]
 }
 
 is_package_repo() {
