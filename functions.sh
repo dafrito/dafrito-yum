@@ -19,6 +19,16 @@ is_yum_repo() {
 	[ -d "$*"/repodata ]
 }
 
+is_package_repo() {
+	local package=$1
+	local output=${2:-echo}
+	[ -d $package ] || $output "Not a package directory: $package"
+	pushd $package >/dev/null || $output "Package is not accessible: $package"
+	make -n rpm >/dev/null || $output "Package cannot be built using make"
+	package_dir=`pwd`
+	popd >/dev/null
+}
+
 attempt() {
 	local times=$1
 	shift
