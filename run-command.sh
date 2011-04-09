@@ -6,15 +6,20 @@ if [ ! "$INSTALLED" ]; then
 	# Name of this tool
 	NAME=`basename $0 .sh`
 
+	bindir=`dirname $0`
+	cd $bindir
+	bindir=`pwd`
+	cd -
+
 	# Internally-used commands, typically /usr/lib/$NAME
-	LIBDIR=`dirname $0`
+	LIBDIR=$bindir
 
 	# Arch-independent data for this tool, typically /usr/share/$NAME
-	DATADIR=`dirname $0`
+	DATADIR=$bindir
 
 	# User-specific configuration, typically ~/.$NAME
-	CONFIGDIR=$LIBDIR/config
-	CONFIGDIR=$LIBDIR/config
+	CONFIGDIR=$bindir/config
+	CONFIGDIR=$bindir/config
 fi
 
 if ! source $LIBDIR/functions.sh; then
