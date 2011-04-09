@@ -3,13 +3,9 @@ PATH=/bin:/usr/bin
 
 REPODIR=$*
 REPODIR=${REPODIR:-.}
-if [ ! -d "$REPODIR/repodata" ]; then
+if is_yum_repo $REPODIR; then
 	echo "$REPODIR does not look like a yum repository" 1>&2
-	read -p "Create anyway? [y/n]"
-	case $REPLY in
-		[yY]*) true ;;
-		*) die ;;
-	esac
+	confirm "Create anyway?" || die
 fi
 
 unsigned=
@@ -48,14 +44,7 @@ if [ -n "$unsigned" ]; then
 	for rpm in $unsigned; do
 		basename $rpm .rpm
 	done
-	failures=0
-	while true; do
-		rpm --addsign $unsigned && break
-		let failures++
-		if [ $failures -gt 3 ]; then
-			die "Failed to sign packages"
-		fi
-	done
+	attempt 3 rpm --addsign $unsigned
 	createrepo -C -v .
 else
 	echo "No packages were added"

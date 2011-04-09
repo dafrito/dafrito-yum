@@ -1,21 +1,15 @@
 #!/bin/bash
 PATH=/bin:/usr/bin
 
-sync() {
-	rsync -ihavz $* $REMOTE/* $REPODIR/
+do_pull() {
+	rsync -ihavz $* "$REMOTE/*" $REPODIR/
 }
 
 REPODIR=$*
 REPODIR=${REPODIR:-.}
 if [ -d "$REPODIR" ]; then
-	[ -d "$REPODIR/repodata" ] || die "$REPODIR does not look like a yum repository"
-	sync -n
-	read -p "Is this acceptable? [y/n]: "
-	case $REPLY in
-		[yY]*) sync ;;
-		*) die "Exited on user input"
-	esac
+	is_yum_repo $REPODIR || die "$REPODIR does not look like a yum repository"
+	do_pull -n && confirm && do_pull || die "Failed to pull"
 else
-	mkdir -v $REPODIR || die "Target directory could not be accessed"
-	sync
+	mkdir -v $REPODIR && do_pull || die "Repository could not be created"
 fi
