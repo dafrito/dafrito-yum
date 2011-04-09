@@ -32,7 +32,8 @@ is_package_repo() {
 	local output=${2:-echo}
 	[ -d $package ] || $output "Not a package directory: $package"
 	pushd $package >/dev/null || $output "Package is not accessible: $package"
-	make -n rpm >/dev/null || $output "Package cannot be built using make"
+	make -n spec >/dev/null || $output "Package specfile cannot be built using make"
+	make -n rpm >/dev/null || $output "Package RPM cannot be built using make"
 	package_dir=`pwd`
 	popd >/dev/null
 }
