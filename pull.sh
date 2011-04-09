@@ -9,8 +9,9 @@ REPODIR=${1:-.}
 if [ -d "$REPODIR" ]; then
 	REPODIR=`abs_path "$REPODIR"`
 	is_yum_repo $REPODIR || die "$REPODIR does not look like a yum repository"
+	do_pull -n && confirm && do_pull || die "Failed to pull"
 else
 	mkdir -v $REPODIR || die
 	REPODIR=`abs_path "$REPODIR"`
+	do_pull || die "Failed to pull"
 fi
-do_pull -n && confirm && do_pull || die "Failed to pull"
