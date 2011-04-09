@@ -17,8 +17,8 @@ sync_package() {
 	make rpm || die "Build failed for $name"
 	popd
 	for rpm in `rpm --specfile $RPMDIR/SPECS/$name.spec -q`; do
-		arch=`echo $rpm | grep -E -o '[^.]+$'`
-		rpmfile="$RPMDIR/RPMS/$arch/$rpm.rpm"
+		local arch=`echo $rpm | grep -E -o '[^.]+$'`
+		local rpmfile="$RPMDIR/RPMS/$arch/$rpm.rpm"
 		if [ ! -f $REPODIR/`basename $rpmfile` ]; then
 			cp -v -p $rpmfile $REPODIR || die "Failed to copy package: $rpmfile"
 			unsigned="$unsigned $rpm.rpm"
