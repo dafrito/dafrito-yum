@@ -50,7 +50,7 @@ command() {
 }
 
 case "$CMD" in 
-	add) command add $* ;;
+	a|add) command add $* ;;
 	ls|list) ls -l $PACKAGEDIR ;;
 	rm|remove|delete) command remove $* ;;
 	pull|clone|get) command pull $* ;;
