@@ -16,5 +16,5 @@ if [ -d "$REPODIR" ]; then
 else
 	confirm "$REPODIR does not exist. Create?" && mkdir -v -p $REPODIR || die
 	REPODIR=`abs_path "$REPODIR"`
-	do_pull || die "Failed to pull"
+	do_pull || die
 fi

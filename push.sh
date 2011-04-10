@@ -13,4 +13,4 @@ fi
 REPODIR=`abs_path "$REPODIR"`
 is_yum_repo $REPODIR || die "$REPODIR does not look like a yum repository"
 createrepo -C -v $REPODIR/ # update the repository's metadata first
-do_push -n && confirm && do_push || die "Failed to push"
+do_push -n && confirm && do_push || die
