@@ -5,7 +5,10 @@ do_pull() {
 	rsync -ihavz $* "$REMOTE/*" $REPODIR/
 }
 
-REPODIR=${1:-.}
+if [ -z "$REPODIR" ] || [ "$#" != 0 ]; then
+	REPODIR=${1:-.}
+fi
+
 if [ -d "$REPODIR" ]; then
 	REPODIR=`abs_path "$REPODIR"`
 	is_yum_repo $REPODIR || die "$REPODIR does not look like a yum repository"

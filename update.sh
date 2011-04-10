@@ -1,7 +1,10 @@
 #!/bin/bash
 PATH=/bin:/usr/bin
 
-REPODIR=${1:-.}
+if [ -z "$REPODIR" ] || [ "$#" != 0 ]; then
+	REPODIR=${1:-.}
+fi
+
 if [ -d "$REPODIR" ]; then
 	REPODIR=`abs_path "$REPODIR"`
 	if ! is_yum_repo $REPODIR; then

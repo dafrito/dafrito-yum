@@ -3,3 +3,6 @@ RPMDIR=$HOME/rpmbuild
 
 # Location of the remote repository, as accessed by SSH
 REMOTE="johndoe@example:/path/to/repo"
+
+# Location of the default local repository
+REPODIR=
