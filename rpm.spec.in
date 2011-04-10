@@ -21,6 +21,9 @@ small, privately managed repositories that all create their own packages.
 %prep
 %setup -q -n %{fullname}
 
+%define datadir %{_datadir}/%{name}
+%define libdir %{datadir}/lib
+
 %build
 cat >>%{name} <<EOF
 #!/bin/bash
@@ -28,8 +31,8 @@ PATH=/bin:/usr/bin
 
 INSTALLED=true
 NAME=%{name}
-LIBDIR=%{_libdir}/%{name}
-DATADIR=%{_datadir}/%{name}
+LIBDIR=%{libdir}
+DATADIR=%{datadir}
 
 CONFIGDIR=\$HOME/.%{name}
 
@@ -44,19 +47,20 @@ chmod ugo+x %{name}
 mkdir -p			$RPM_BUILD_ROOT%{_bindir}
 install -p -m 755 %{name}	$RPM_BUILD_ROOT%{_bindir}
 
-mkdir -p 		$RPM_BUILD_ROOT%{_libdir}/%{name}
-install -p -m 755 *.sh	$RPM_BUILD_ROOT%{_libdir}/%{name}
+# Architecture-independent commands
+mkdir -p 		$RPM_BUILD_ROOT%{libdir}
+install -p -m 755 *.sh	$RPM_BUILD_ROOT%{libdir}
 
-mkdir -p 		$RPM_BUILD_ROOT%{_datadir}/%{name}
-cp -p config.default	$RPM_BUILD_ROOT%{_datadir}/%{name}
+mkdir -p 		$RPM_BUILD_ROOT%{datadir}
+cp -p config.default	$RPM_BUILD_ROOT%{datadir}
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 %files
 %{_bindir}/*
-%{_libdir}/%{name}/*
-%{_datadir}/%{name}/*
+%{libdir}/*
+%{datadir}/*
 
 %changelog
 * Sat Apr 09 2011 Aaron Faanes <dafrito@gmail.com> - 1.1-3
