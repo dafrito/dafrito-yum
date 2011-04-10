@@ -59,7 +59,6 @@ cp -p config.default	$RPM_BUILD_ROOT%{datadir}
 
 %files
 %{_bindir}/*
-%{libdir}/*
 %{datadir}/*
 
 %changelog
