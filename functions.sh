@@ -54,6 +54,7 @@ check_remote() {
 	if [ -z "$REMOTE" ] || (echo $REMOTE | grep -q example); then
 		echo "REMOTE is not valid (currently $REMOTE)"
 		read -p "Press any key to edit $CONFIGDIR/config"
+		[ -n "$EDITOR" ] || die "\$EDITOR is not set"
 		$EDITOR $CONFIGDIR/config
 		source $CONFIGDIR/config || die "Failed to read configuration"
 		if test_remote; then
